@@ -1,6 +1,6 @@
 
 
-# (১)TypeScript: `interface` vs `type` – কী পার্থক্য?
+# (১)What are some differences between interfaces and types in TypeScript?
 
 TypeScript-এ `interface` এবং `type` structure describe করতে use হয়, কিন্তু তাদের মধ্যে কিছু গুরুত্বপূর্ণ পার্থক্য রয়েছে।
 
@@ -27,7 +27,7 @@ TypeScript-এ `interface` এবং `type` structure describe করতে use 
 
 
 
-# (২) TypeScript-এ Enum: Named Constants এর শক্তিশালী ব্যবহার
+# (২) What is the use of enums in TypeScript? Provide an example of a numeric and string enum.
 
 আমরা যখন বড় প্রজেক্টে কাজ করি, তখন প্রায়ই কিছু related constant values বারবার ব্যবহার করতে হয়। যেমন user roles, order status, বা direction values। এই constant values গুলোকে সুন্দরভাবে organize এবং manage করার জন্য TypeScript-এ **enum** একটি দুর্দান্ত feature।
 
@@ -40,58 +40,6 @@ Enum (Enumeration) হলো একটি special type যা আমাদের
 - **Compile-time type checking** নিশ্চিত হয়
 - Magic numbers বা hard-coded strings এড়ানো যায়
 
-### পুরনো পদ্ধতি (Enum ছাড়া):
-
-```typescript
-const ADMIN = "admin";
-const USER = "user";
-const GUEST = "guest";
-
-function checkAccess(role: string) {
-  if (role === ADMIN) {
-    // typo হওয়ার সম্ভাবনা
-  }
-}
-```
-
-এই approach-এ typo হওয়ার সম্ভাবনা থাকে এবং auto-completion পাওয়া যায় না।
-
-## Numeric Enum উদাহরণ
-
-Numeric enum-এ প্রতিটি member-কে একটি numeric value assign করা হয়। Default ভাবে 0 থেকে শুরু হয় এবং auto-increment হয়:
-
-```typescript
-enum Direction {
-  Up,      // 0
-  Down,    // 1
-  Left,    // 2
-  Right    // 3
-}
-
-// ব্যবহার
-function move(direction: Direction) {
-  if (direction === Direction.Up) {
-    console.log("Moving up!");
-  }
-}
-
-move(Direction.Up);
-console.log(Direction.Down); // Output: 1
-```
-
-Custom value দিয়েও numeric enum তৈরি করা যায়:
-
-```typescript
-enum HttpStatus {
-  OK = 200,
-  BadRequest = 400,
-  Unauthorized = 401,
-  NotFound = 404,
-  InternalServerError = 500
-}
-
-console.log(HttpStatus.OK); // Output: 200
-```
 
 ## String Enum উদাহরণ
 
@@ -138,7 +86,7 @@ Enum এর মাধ্যমে আপনার কোড আরও structured
 
 
 
-# (৩) TypeScript-এ any, unknown, এবং never: Type Safety এর তিনটি ভিন্ন মাত্রা
+# (৩) Explain the difference between any, unknown, and never types in TypeScript
 
 TypeScript এর type system এর মধ্যে `any`, `unknown`, এবং `never` তিনটি special type রয়েছে যা প্রায়ই কনফিউজিং হয়ে যায়। এগুলো আসলে type safety এর তিনটি ভিন্ন approach represent করে। আসুন একে একে দেখে নেওয়া যাক।
 
@@ -215,7 +163,7 @@ TypeScript এর type system এর শক্তি বুঝতে এই ত�
 
 
 
-# (৪) TypeScript-এ keyof: Type-Safe Property Access এর মাস্টার কী
+# (৪) What is the use of the keyof keyword in TypeScript? Provide an example.
 
 TypeScript এর `keyof` operator একটি powerful feature যা আমাদেরকে type level এ object এর keys extract করতে দেয়। এটি advanced TypeScript patterns এর foundation এবং type-safe property access নিশ্চিত করে।
 
@@ -240,88 +188,7 @@ type UserKeys = keyof User;
 // "id" | "name" | "email" | "role"
 ```
 
-## Basic keyof ব্যবহার
 
-```typescript
-function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
-  return obj[key];
-}
-
-const user: User = {
-  id: 1,
-  name: "Dip",
-  email: "dip@das.com",
-  role: "admin"
-};
-
-// Type-safe property access
-const userName = getProperty(user, "name"); // string
-const userId = getProperty(user, "id");     // number
-
-// এটি compile-time error দিবে
-// const invalid = getProperty(user, "age"); // Error: "age" is not assignable
-```
-
-
-## keyof এর Real-World উদাহরণ
-
-### API Response Handler
-
-```typescript
-interface ApiResponse {
-  data: User[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
-type ApiResponseKeys = keyof ApiResponse;
-// "data" | "total" | "page" | "limit"
-
-function extractFromResponse<K extends keyof ApiResponse>(
-  response: ApiResponse,
-  key: K
-): ApiResponse[K] {
-  return response[key];
-}
-
-const apiResponse: ApiResponse = {
-  data: [user],
-  total: 1,
-  page: 1,
-  limit: 10
-};
-
-const totalCount = extractFromResponse(apiResponse, "total"); // number
-const userData = extractFromResponse(apiResponse, "data");   // User[]
-```
-
-### Form Validation
-
-```typescript
-type FormField = keyof User; // "id" | "name" | "email" | "role"
-
-function validateField(field: FormField, value: any): boolean {
-  switch (field) {
-    case "id":
-      return typeof value === "number";
-    case "name":
-      return typeof value === "string" && value.length > 0;
-    case "email":
-      return typeof value === "string" && value.includes("@");
-    case "role":
-      return value === "admin" || value === "user";
-    default:
-      return false;
-  }
-}
-```
-
-## keyof এর সীমাবদ্ধতা
-
-- শুধুমাত্র known properties এর সাথে কাজ করে
-- Symbol keys support করে না
-- Private/protected properties access করে না
 
 ## কখন keyof ব্যবহার করবেন?
 
