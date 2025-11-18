@@ -58,7 +58,7 @@ interface Book {
 }
 
 function printBookDetails(book: Book) {
-  console.log(`Title: ${book.title}, Author: ${book.author}, Published:${book.publishedYear}, Available: ${book.isAvailable}`)
+  return (`Title: ${book.title}, Author: ${book.author}, Published:${book.publishedYear}, Available: ${book.isAvailable}`)
 }
 
 
