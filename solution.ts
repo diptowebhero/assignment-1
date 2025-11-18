@@ -38,13 +38,12 @@ class Person {
 function filterByRating(books: { title: string, rating: number }[]) {
   return books.filter(book => {
     if (book.rating < 0 || book.rating > 5) {
-      console.warn(`Invalid rating detected for "${book.title}": ${book.rating}`);
       return false;
     }
-
     return book.rating >= 4;
   });
 }
+
 
 function filterActiveUsers(users: { id: number, name: string, email: string, isActive: boolean }[]) {
   return users.filter((user) => user.isActive)
